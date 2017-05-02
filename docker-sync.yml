@@ -1,0 +1,7 @@
+version: '2'
+
+syncs:
+  sync-volume:
+    src: '.'
+    dest: '/usr/src/app'
+    sync_strategy: 'unison'

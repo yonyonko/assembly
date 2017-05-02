@@ -1,0 +1,77 @@
+version: '2'
+volumes:
+  sync-volume:
+    external: true
+services:
+  web:
+    volumes:
+services:
+#  redis:
+#    image: redis
+
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - '3001:1080'
+
+  datastore:
+    image: busybox
+    volumes:
+      - /var/lib/mysql
+
+  db:
+    image: mysql:5.7.10
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - '3308:3306'
+    volumes_from:
+      - datastore
+
+  bundle:
+    image: busybox
+    volumes:
+      - /usr/src/app/vendor/bundle
+
+  nodemodules:
+    image: busybox
+    volumes:
+      - /usr/src/app/node_modules
+  web:
+    tty: true
+    stdin_open: true
+    environment:
+      DISABLE_SPRING: 1
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: password
+      BUNDLE_JOBS: 4
+      BUNDLE_PATH: /usr/src/app/vendor/bundle
+      BUNDLE_GEMFILE: /usr/src/app/Gemfile
+      SMTP_ADDRESS: 'mailcatcher'
+      SMTP_PORT: 1025
+      MAILER_DELIVERY_METHOD: 'smtp'
+#      REDIS_URL: redis://redis:6379
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.web
+    command: bash -c "rm -f /usr/src/app/tmp/pids/server.pid && bundle exec rails s"
+    ports:
+      - '3000:3000'
+    volumes:
+#      - .:/usr/src/app
+      - sync-volume:/usr/src/app
+#      - ~/.ssh:/root/.ssh:ro
+#    volumes_from:
+#      - bundle
+#      - nodemodules
+    dns:
+     - 8.8.8.8
+     - 8.8.8.4
+    links:
+      - db
+      - mailcatcher
+#      - redis
+    #privileged: true
+
