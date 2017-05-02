@@ -18,6 +18,7 @@ class AssembliesController < ApplicationController
     @assembly = current_user.assemblies.build
     @assembly.user.stockholders.each do |stockholder|
       @assembly.stockholders.push stockholder
+      
     end
   end
 
