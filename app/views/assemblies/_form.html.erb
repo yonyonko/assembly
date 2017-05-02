@@ -1,0 +1,32 @@
+<%= simple_form_for(@assembly) do |f| %>
+  <% if @assembly.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@assembly.errors.count, "error") %> prohibited this assembly from being saved:</h2>
+
+      <ul>
+      <% @assembly.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :description %><br>
+    <%= f.text_field :description %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+  
+  
+    <%= f.fields_for :stockholders, include_id: false do |stockholder_form| %>
+      <%= stockholder_form.label :name, stockholder_form.object.name %>
+      <%= stockholder_form.check_box :id, {}, stockholder_form.object.id, nil %>
+    <% end %>
+  
+<% end %>
