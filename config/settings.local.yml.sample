@@ -1,0 +1,23 @@
+aws:
+  default:
+    credentials:
+      access_key_id: ''
+      secret_access_key: ''
+  ses:
+    credentials:
+      access_key_id: ''
+      secret_access_key: ''
+facebook:
+  app_secret: ''
+messenger:
+  enabled: false
+  token: ''
+slack:
+  enabled: true
+  url: ''
+  channel: '@yourname'
+  username: 'm-gram-server-local'
+  icon_emoji: ':beer:'
+debug:
+  psids:
+    {TOKEN_FOR_BUSINESS}: {PSID}

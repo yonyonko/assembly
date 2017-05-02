@@ -1,0 +1,53 @@
+version: '2'
+volumes:
+  yon-volume:
+    external: true
+services:
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - '3002:1080'
+
+  datastore:
+    image: busybox
+    volumes:
+      - /var/lib/mysql
+
+  db:
+    image: mysql:5.7.11
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - '3309:3306'
+    volumes_from:
+      - datastore
+
+  web:
+    tty: true
+    stdin_open: true
+    environment:
+      DISABLE_SPRING: 1
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: password
+      BUNDLE_JOBS: 4
+      BUNDLE_PATH: /usr/src/app/vendor/bundle
+      BUNDLE_GEMFILE: /usr/src/app/Gemfile
+      SMTP_ADDRESS: 'mailcatcher'
+      SMTP_PORT: 1025
+      MAILER_DELIVERY_METHOD: 'smtp'
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.web
+    command: bash -c "rm -f /usr/src/app/tmp/pids/server.pid && bundle exec rails s -p 3000 -b 0.0.0.0"
+    ports:
+      - '3000:3000'
+    volumes:
+      - yon-volume:/usr/src/app
+    dns:
+     - 8.8.8.8
+     - 8.8.8.4
+    links:
+      - db
+      - mailcatcher

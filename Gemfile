@@ -27,6 +27,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'simple_form'
 
+gem 'config'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
@@ -47,5 +49,19 @@ group :development do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  # debug
+  gem 'better_errors' # エラー画面を見やすくする
+  gem 'binding_of_caller' # better_errorsのエラー画面でREPLが使える
+  gem 'tapp' # プリントデバッグがしやすくなる
+  gem 'view_source_map', github: 'chanibarin/view_source_map', branch: 'rails-5', submodules: true
+  gem 'bullet' # N+1問題とか余計なSQLを検出できる
+
+  # debug on console
+  gem 'pry-rails' # railsでpryが使える
+  gem 'pry-byebug' # pryでデバックコマンドが使える
+  gem 'awesome_print' # プリントデバッグの出力を整形
+  gem 'hirb' # SQLの結果を見やすく整形してくれる
+  gem 'hirb-unicode' # hirbの日本語対応
 end
 

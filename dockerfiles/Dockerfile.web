@@ -1,0 +1,30 @@
+FROM ruby:2.3.1
+ENV LANG C.UTF-8
+
+RUN apt-get update
+RUN apt-get install -y build-essential libpq-dev vim
+RUN gem install bundler
+
+RUN curl -O https://nodejs.org/download/release/v6.3.0/node-v6.3.0-linux-x64.tar.gz
+RUN tar --strip-components 1 -xzvf node-v6.3.0-linux-x64.tar.gz -C /usr/local
+
+RUN npm install -g yarn
+
+ENV APP_HOME /usr/src/app
+RUN mkdir -p $APP_HOME
+WORKDIR $APP_HOME
+
+#COPY Gemfile $APP_HOME/
+#COPY Gemfile.lock $APP_HOME/
+
+#ENV BUNDLE_GEMFILE=$APP_HOME/Gemfile \
+#  BUNDLE_JOBS=4 \
+#  BUNDLE_PATH=/vendor/bundle
+
+#RUN bundle install
+
+#COPY package.json $APP_HOME/package.json
+
+#RUN yarn
+
+#COPY . $APP_HOME

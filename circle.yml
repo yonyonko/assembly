@@ -1,0 +1,38 @@
+machine:
+  ruby:
+    version: ruby-2.3.0
+  node:
+    version: 6.3.0
+  timezone: Asia/Tokyo
+  environment:
+    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
+    RAILS_ENV: "test"
+    RACK_ENV: "test"
+dependencies:
+  override:
+    - yarn
+    - bundle install --path=vendor/bundle --jobs=4 --retry=3
+  cache_directories:
+    - ~/.cache/yarn
+  bundler:
+    without: [production]
+  pre:
+    - yarn cache clean
+  post:
+    - yarn run setup
+database:
+  override:
+    - mv config/database.ci.yml config/database.yml
+    - bundle exec rake db:create db:schema:load --trace
+test:
+  override:
+    - bundle exec rspec --format RspecJunitFormatter -o $CIRCLE_TEST_REPORTS/rspec/junit.xml
+#deployment:
+#  production:
+#    branch: master
+#    commands:
+#      - ./scripts/deploy.sh
+#  staging:
+#    branch: release
+#    commands:
+#      - ./scripts/deploy.sh
