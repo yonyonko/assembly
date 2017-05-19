@@ -10,9 +10,42 @@ RUN tar --strip-components 1 -xzvf node-v6.3.0-linux-x64.tar.gz -C /usr/local
 
 RUN npm install -g yarn
 
+RUN gem install awesome_print
+RUN gem install hirb
+
 ENV APP_HOME /usr/src/app
 RUN mkdir -p $APP_HOME
 WORKDIR $APP_HOME
+
+
+RUN echo "require 'irb/completion'\n\
+require 'irb/ext/save-history'\n\
+IRB.conf[:SAVE_HISTORY] = 100000\n\
+IRB.conf[:HISTORY_FILE] = '/root/logs/.irb_history'\n"\
+> /root/.irbrc
+
+RUN echo "Pry.config.history.file = '/root/logs/.pry_history'\n\
+# awesome_print\n\
+require 'awesome_print'\n\
+Pry.config.print = proc { |output, value| output.puts value.ai }\n\
+require 'hirb'\n\
+# Slightly dirty hack to fully support in-session Hirb.disable/enable toggling\n\
+Hirb::View.instance_eval do\n\
+	def enable_output_method\n\
+		@output_method = true\n\
+		@old_print = Pry.config.print\n\
+		Pry.config.print = proc do |*args|\n\
+			Hirb::View.view_or_page_output(args[1]) || @old_print.call(*args)\n\
+		end\n\
+	end\n\
+	def disable_output_method\n\
+		Pry.config.print = @old_print\n\
+		@output_method = nil\n\
+	end\n\
+end\n\
+Hirb.enable\n"\
+> /root/.pryrc
+
 
 #COPY Gemfile $APP_HOME/
 #COPY Gemfile.lock $APP_HOME/
@@ -28,3 +61,4 @@ WORKDIR $APP_HOME
 #RUN yarn
 
 #COPY . $APP_HOME
+

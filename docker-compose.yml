@@ -13,6 +13,11 @@ services:
     volumes:
       - /var/lib/mysql
 
+  rootlogs:
+    image: busybox
+    volumes:
+      - /root/logs
+
   db:
     image: mysql:5.7.11
     environment:
@@ -37,6 +42,7 @@ services:
       SMTP_ADDRESS: 'mailcatcher'
       SMTP_PORT: 1025
       MAILER_DELIVERY_METHOD: 'smtp'
+      HISTFILE: /root/logs/.bash_history
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.web
@@ -45,9 +51,12 @@ services:
       - '3000:3000'
     volumes:
       - yon-volume:/usr/src/app
+    volumes_from:
+      - rootlogs
     dns:
      - 8.8.8.8
      - 8.8.8.4
     links:
       - db
       - mailcatcher
+

@@ -1,7 +1,9 @@
-version: '2'
-
+version: "2"
 syncs:
   yon-volume:
     src: '.'
-    dest: '/usr/src/app'
     sync_strategy: 'unison'
+    sync_excludes: ['.git/*', 'tmp/cache/assets/*', 'tmp/miniprofiler/*', 'log/*']
+    watch_excludes: ['.git/*', 'tmp/cache/assets/*', 'tmp/miniprofiler/*', 'log/*']
+    sync_excludes_type: 'Path'
+
