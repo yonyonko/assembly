@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170412115239) do
+ActiveRecord::Schema.define(version: 20170502100236) do
 
   create_table "assemblies", force: :cascade do |t|
     t.string   "name"
@@ -30,12 +30,20 @@ ActiveRecord::Schema.define(version: 20170412115239) do
   add_index "assemblies_stockholders", ["stockholder_id"], name: "index_assemblies_stockholders_on_stockholder_id"
 
   create_table "stockholders", force: :cascade do |t|
-    t.string   "name"
-    t.string   "email"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer  "user_id"
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
   end
+
+  add_index "stockholders", ["email"], name: "index_stockholders_on_email", unique: true
+  add_index "stockholders", ["reset_password_token"], name: "index_stockholders_on_reset_password_token", unique: true
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
